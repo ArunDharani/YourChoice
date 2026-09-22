@@ -1,7 +1,5 @@
 package com.ecommerce.YourChoice.Service;
-
 import com.ecommerce.YourChoice.Entity.category;
-
 import java.util.List;
 
 public interface categoryService {
