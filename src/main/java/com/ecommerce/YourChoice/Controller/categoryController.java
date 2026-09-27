@@ -1,4 +1,5 @@
 package com.ecommerce.YourChoice.Controller;
+import com.ecommerce.YourChoice.DTO.CategoryDTO;
 import com.ecommerce.YourChoice.DTO.CategoryResponseDTO;
 import com.ecommerce.YourChoice.Entity.category;
 import com.ecommerce.YourChoice.ServiceImp.categoryServiceImpl;
@@ -17,13 +18,18 @@ public class categoryController {
     public categoryServiceImpl categoryServiceImpl;
 
     @GetMapping("/public/getcategories")
-    public ResponseEntity<CategoryResponseDTO> getAllcategories() {
-        CategoryResponseDTO  respone =  categoryServiceImpl.getAllcategories();
+    public ResponseEntity<CategoryResponseDTO> getAllcategories
+            (
+                @RequestParam(name = "pageNumber") Integer pageNumber,
+                @RequestParam(name = "pageSize") Integer pageSize
+            )
+    {
+        CategoryResponseDTO  respone =  categoryServiceImpl.getAllcategories(pageNumber , pageSize);
         return new ResponseEntity<>(respone , HttpStatus.OK);
     }
 
     @PostMapping("/public/createCategory")
-    public ResponseEntity<String> createCategory(@Valid @RequestBody category category) {
+    public ResponseEntity<String> createCategory(@Valid @RequestBody CategoryDTO category) {
         String status =  categoryServiceImpl.createCategory(category);
         return new ResponseEntity<>(status, HttpStatus.CREATED);
     }
@@ -35,7 +41,7 @@ public class categoryController {
     }
 
     @PutMapping("/admin/category/{categoryId}")
-    public ResponseEntity<String> updateCategory(@PathVariable Long categoryId , @RequestBody category category) {
+    public ResponseEntity<String> updateCategory(@PathVariable Long categoryId , @RequestBody CategoryDTO category) {
             String status = categoryServiceImpl.updateCategory(categoryId , category);
             return new ResponseEntity<>(status , HttpStatus.OK);
     }

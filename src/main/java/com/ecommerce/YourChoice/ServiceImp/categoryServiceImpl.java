@@ -8,6 +8,9 @@ import com.ecommerce.YourChoice.Repository.CategoryRepository;
 import com.ecommerce.YourChoice.Service.categoryService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -24,8 +27,13 @@ public class categoryServiceImpl implements categoryService {
     private ModelMapper modelMapper;
 
     @Override
-    public CategoryResponseDTO getAllcategories() {
-        List<category> categories = categoryRepository.findAll();
+    public CategoryResponseDTO getAllcategories(Integer pageNumber , Integer pageSize) {
+
+
+        Pageable pageDetails = PageRequest.of(pageNumber , pageSize);
+        Page<category> categoryPage = categoryRepository.findAll(pageDetails);
+
+        List<category> categories = categoryPage.getContent();
 
         if (categories.isEmpty()) {
             throw new APIException("NO categories exist");
@@ -42,14 +50,18 @@ public class categoryServiceImpl implements categoryService {
     }
 
     @Override
-    public String createCategory(category category) {
+    public String createCategory(CategoryDTO category) {
+
+        // convert DTO into Entity
+        category data = modelMapper.map(category , category.class);
 
         // first checking whether the given category exit or not
-        category exist = categoryRepository.findByCategoryName(category.getCategoryName());
+        category exist = categoryRepository.findByCategoryName(data.getCategoryName());
         if (exist != null) {
             throw new APIException("category with the name " + category.getCategoryName() + " already exist");
         }
-        categoryRepository.save(category);
+
+        categoryRepository.save(data);
         return "New category has been created";
     }
 
@@ -63,11 +75,14 @@ public class categoryServiceImpl implements categoryService {
     }
 
     @Override
-    public String updateCategory(Long categoryId, category category) {
+    public String updateCategory(Long categoryId, CategoryDTO category) {
+
+        // convert DTO into Entity
+        category data = modelMapper.map(category , category.class);
 
         Optional<category> currentcategory = categoryRepository.findById(categoryId);
         category savedData = currentcategory.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        savedData.setCategoryName(category.getCategoryName());
+        savedData.setCategoryName(data.getCategoryName());
         categoryRepository.save(savedData);
 
         return "Category has been updated";
