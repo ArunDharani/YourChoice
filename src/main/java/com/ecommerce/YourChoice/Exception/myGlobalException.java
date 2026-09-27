@@ -33,4 +33,5 @@ public class myGlobalException {
         String message = input.getMessage();
         return new ResponseEntity<>(message , HttpStatus.BAD_REQUEST);
     }
+
 }

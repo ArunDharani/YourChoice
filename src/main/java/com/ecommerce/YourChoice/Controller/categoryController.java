@@ -1,4 +1,5 @@
 package com.ecommerce.YourChoice.Controller;
+import com.ecommerce.YourChoice.DTO.CategoryResponseDTO;
 import com.ecommerce.YourChoice.Entity.category;
 import com.ecommerce.YourChoice.ServiceImp.categoryServiceImpl;
 import jakarta.validation.Valid;
@@ -16,9 +17,9 @@ public class categoryController {
     public categoryServiceImpl categoryServiceImpl;
 
     @GetMapping("/public/getcategories")
-    public ResponseEntity<List<category>> getAllcategories() {
-        List<category> results =  categoryServiceImpl.getAllcategories();
-        return new ResponseEntity<>(results , HttpStatus.OK);
+    public ResponseEntity<CategoryResponseDTO> getAllcategories() {
+        CategoryResponseDTO  respone =  categoryServiceImpl.getAllcategories();
+        return new ResponseEntity<>(respone , HttpStatus.OK);
     }
 
     @PostMapping("/public/createCategory")

@@ -1,9 +1,12 @@
 package com.ecommerce.YourChoice.ServiceImp;
+import com.ecommerce.YourChoice.DTO.CategoryDTO;
+import com.ecommerce.YourChoice.DTO.CategoryResponseDTO;
 import com.ecommerce.YourChoice.Entity.category;
 import com.ecommerce.YourChoice.Exception.APIException;
 import com.ecommerce.YourChoice.Exception.ResourceNotFoundException;
 import com.ecommerce.YourChoice.Repository.CategoryRepository;
 import com.ecommerce.YourChoice.Service.categoryService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -17,15 +20,25 @@ public class categoryServiceImpl implements categoryService {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
     @Override
-    public List<category> getAllcategories() {
+    public CategoryResponseDTO getAllcategories() {
         List<category> categories = categoryRepository.findAll();
 
         if (categories.isEmpty()) {
             throw new APIException("NO categories exist");
         }
 
-        return categories;
+        List<CategoryDTO> categoriesDTO = categories.stream()
+                .map(category -> modelMapper.map(category , CategoryDTO.class))
+                .toList();
+
+        CategoryResponseDTO response = new CategoryResponseDTO();
+        response.setContent(categoriesDTO);
+
+        return response;
     }
 
     @Override
