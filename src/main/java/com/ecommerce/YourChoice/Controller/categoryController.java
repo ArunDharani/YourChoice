@@ -20,8 +20,8 @@ public class categoryController {
     @GetMapping("/public/getcategories")
     public ResponseEntity<CategoryResponseDTO> getAllcategories
             (
-                @RequestParam(name = "pageNumber") Integer pageNumber,
-                @RequestParam(name = "pageSize") Integer pageSize
+                @RequestParam(name = "pageNumber" , required = true) Integer pageNumber,
+                @RequestParam(name = "pageSize" , required = true) Integer pageSize
             )
     {
         CategoryResponseDTO  respone =  categoryServiceImpl.getAllcategories(pageNumber , pageSize);
