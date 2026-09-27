@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface categoryService {
 
-    CategoryResponseDTO getAllcategories(Integer pageNumber , Integer pageSize);
+    CategoryResponseDTO getAllcategories(Integer pageNumber , Integer pageSize , String sortBy , String sortOrder);
     String createCategory(CategoryDTO category);
     String deleteCategory(Long categoryId);
     String updateCategory(Long categoryId , CategoryDTO category);

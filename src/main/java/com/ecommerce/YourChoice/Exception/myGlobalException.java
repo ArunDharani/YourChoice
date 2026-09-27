@@ -1,4 +1,5 @@
 package com.ecommerce.YourChoice.Exception;
+import com.ecommerce.YourChoice.DTO.apiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -23,15 +24,15 @@ public class myGlobalException {
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<String> myResourceNotFound(ResourceNotFoundException input) {
-        String message = input.getMessage();
-        return new ResponseEntity<>(message , HttpStatus.NOT_FOUND);
+    public ResponseEntity<apiResponse> myResourceNotFound(ResourceNotFoundException input) {
+        apiResponse newapiresp = new apiResponse(input.getMessage() , false);
+        return new ResponseEntity<>(newapiresp , HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(APIException.class)
-    public ResponseEntity<String> myApIException(APIException input) {
-        String message = input.getMessage();
-        return new ResponseEntity<>(message , HttpStatus.BAD_REQUEST);
+    public ResponseEntity<apiResponse> myApIException(APIException input) {
+        apiResponse newapiresp = new apiResponse(input.getMessage() , false);
+        return new ResponseEntity<>(newapiresp , HttpStatus.BAD_REQUEST);
     }
 
 }

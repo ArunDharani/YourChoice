@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -27,10 +28,13 @@ public class categoryServiceImpl implements categoryService {
     private ModelMapper modelMapper;
 
     @Override
-    public CategoryResponseDTO getAllcategories(Integer pageNumber , Integer pageSize) {
+    public CategoryResponseDTO getAllcategories(Integer pageNumber , Integer pageSize , String sortBy , String sortOrder) {
 
+        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("ASC")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
 
-        Pageable pageDetails = PageRequest.of(pageNumber , pageSize);
+        Pageable pageDetails = PageRequest.of(pageNumber , pageSize , sortByAndOrder);
         Page<category> categoryPage = categoryRepository.findAll(pageDetails);
 
         List<category> categories = categoryPage.getContent();
@@ -44,7 +48,12 @@ public class categoryServiceImpl implements categoryService {
                 .toList();
 
         CategoryResponseDTO response = new CategoryResponseDTO();
-        response.setContent(categoriesDTO);
+        response.setResponse(categoriesDTO);
+        response.setPageNumber(categoryPage.getNumber());
+        response.setPageSize(categoryPage.getSize());
+        response.setTotalPages(categoryPage.getTotalPages());
+        response.setLastPage(categoryPage.isLast());
+
 
         return response;
     }

@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
+import static com.ecommerce.YourChoice.config.AppConstants.*;
+
 @RestController
 @RequestMapping("/api")
 public class categoryController {
@@ -20,11 +22,13 @@ public class categoryController {
     @GetMapping("/public/getcategories")
     public ResponseEntity<CategoryResponseDTO> getAllcategories
             (
-                @RequestParam(name = "pageNumber" , required = true) Integer pageNumber,
-                @RequestParam(name = "pageSize" , required = true) Integer pageSize
+                @RequestParam(name = "pageNumber" , defaultValue = PAGE_NUMBER , required = false) Integer pageNumber,
+                @RequestParam(name = "pageSize" , defaultValue = PAGE_SIZE,required = false) Integer pageSize,
+                @RequestParam(name = "sortBy" , defaultValue = SORT_BY , required = false) String sortBy,
+                @RequestParam(name = "sortOrder" , defaultValue = SORT_ORDER , required = false) String sortOrder
             )
     {
-        CategoryResponseDTO  respone =  categoryServiceImpl.getAllcategories(pageNumber , pageSize);
+        CategoryResponseDTO  respone =  categoryServiceImpl.getAllcategories(pageNumber , pageSize , sortBy , sortOrder);
         return new ResponseEntity<>(respone , HttpStatus.OK);
     }
 
