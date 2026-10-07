@@ -61,4 +61,41 @@ public class ProductServiceImpl implements ProductService {
 
         return response;
     }
+
+    @Override
+    public ProductResponseDTO getAllProductsById(String categoryId) {
+
+        // Obtaining the category
+        category existingCategory = cateRepo.findById(Long.parseLong(categoryId))
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("category", "category id" , categoryId));
+
+        // obtain all the product data by categoryId
+        List<Product> products = prodRepo.findByCategoryOrderByProductName(existingCategory);
+
+        List<ProductOutPutDTO> output = products.stream()
+                .map(product -> modelMapper.map(product, ProductOutPutDTO.class))
+                .toList();
+
+        ProductResponseDTO response = new ProductResponseDTO();
+        response.setData(output);
+
+        return response;
+    }
+
+    @Override
+    public ProductResponseDTO getAllByKeyword(String keyword) {
+
+        // obtain all the product data by categoryId
+        List<Product> products = prodRepo.findByProductNameLikeIgnoreCase('%'+keyword+'%');
+
+        List<ProductOutPutDTO> output = products.stream()
+                .map(product -> modelMapper.map(product, ProductOutPutDTO.class))
+                .toList();
+
+        ProductResponseDTO response = new ProductResponseDTO();
+        response.setData(output);
+
+        return response;
+    }
 }

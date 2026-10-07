@@ -5,10 +5,9 @@ import com.ecommerce.YourChoice.Service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -17,16 +16,30 @@ public class ProductController {
     @Autowired
     private ProductService prodService;
 
-    @RequestMapping("/admin/categories/{categoryId}/product")
+    @PostMapping("/admin/categories/{categoryId}/product")
     public ResponseEntity<String> addProduct(@RequestBody ProductDTO product ,@PathVariable String categoryId) {
         String status = prodService.addProduct(categoryId , product);
         return new ResponseEntity<>(status ,HttpStatus.CREATED);
     }
 
 
-    @RequestMapping("/public/products")
+    @GetMapping("/public/products")
     public ResponseEntity<ProductResponseDTO> getAllProducts() {
         ProductResponseDTO data = prodService.getAllProducts();
         return new ResponseEntity<>(data , HttpStatus.OK);
     }
+
+    @GetMapping("/public/{categoryId}/products")
+    public ResponseEntity<ProductResponseDTO> getProductsByCategoryId(@PathVariable String categoryId) {
+        ProductResponseDTO data = prodService.getAllProductsById(categoryId);
+        return new ResponseEntity<>(data , HttpStatus.OK);
+    }
+
+    @GetMapping("/public/products/{keyword}")
+    public ResponseEntity<ProductResponseDTO> getProductsByKeyword(@PathVariable String keyword) {
+        ProductResponseDTO data = prodService.getAllByKeyword(keyword);
+        return new ResponseEntity<>(data , HttpStatus.OK);
+    }
+
+
 }
