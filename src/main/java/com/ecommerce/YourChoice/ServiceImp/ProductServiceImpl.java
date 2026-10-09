@@ -11,9 +11,12 @@ import com.ecommerce.YourChoice.Repository.ProductRepository;
 import com.ecommerce.YourChoice.Service.ProductService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -97,5 +100,44 @@ public class ProductServiceImpl implements ProductService {
         response.setData(output);
 
         return response;
+    }
+
+    @Override
+    public String updateProduct(ProductDTO productDTO, Long productId) {
+
+        // first let us check product exists or not
+        Optional<Product> isExistProduct = prodRepo.findById(productId);
+        Product newProduct = isExistProduct.orElseThrow(() -> new ResourceNotFoundException("product" , "Product Id" , productId));
+
+        // Convert dto into Entity
+        Product currentProduct = modelMapper.map(productDTO , Product.class);
+
+        // updating the fields
+        newProduct.setProductName(currentProduct.getProductName());
+        newProduct.setDiscount(currentProduct.getDiscount());
+        newProduct.setDescription(currentProduct.getDescription());
+        newProduct.setCategory(currentProduct.getCategory());
+        newProduct.setQuantity(currentProduct.getQuantity());
+        newProduct.setPrice(currentProduct.getPrice());
+        double specialPrice = currentProduct.getPrice() - (currentProduct.getDiscount() * 0.01) * currentProduct.getPrice();
+        newProduct.setSpecialPrice(specialPrice);
+
+        // saving the prduct
+        prodRepo.save(newProduct);
+
+        return "product updated successfully";
+    }
+
+    @Override
+    public String deleteProduct(Long productId) {
+
+        // Check whether the product exist
+        prodRepo.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Product ", "product Id", productId));
+
+        // delete the product
+        prodRepo.deleteById(productId);
+
+        return "Product has been deleted successfully";
+
     }
 }
