@@ -13,10 +13,16 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -139,5 +145,42 @@ public class ProductServiceImpl implements ProductService {
 
         return "Product has been deleted successfully";
 
+    }
+
+    @Override
+    public String updateProdImage(Long productID, MultipartFile image) throws IOException {
+
+        Product product = prodRepo.findById(productID).orElseThrow(() -> new ResourceNotFoundException("Product","product id",productID));
+
+        String path = "images/";
+
+        String fileName = uploadImage(path , image);
+
+        product.setImage(fileName);
+
+        prodRepo.save(product);
+
+
+        return "image have been updated for the product";
+    }
+
+    private String uploadImage(String path, MultipartFile image) throws IOException {
+        String originalFileName = image.getOriginalFilename();
+
+        String randomId = UUID.randomUUID().toString();
+
+        String fileName = randomId.concat(originalFileName.substring(originalFileName.lastIndexOf('.')));
+
+        String filepath = path + File.separator + fileName;
+
+        File folder = new File(path);
+
+        if (!folder.exists()) {
+            folder.mkdir();
+        }
+
+        Files.copy(image.getInputStream() , Paths.get(filepath));
+
+        return fileName;
     }
 }
