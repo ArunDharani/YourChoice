@@ -12,6 +12,7 @@ import com.ecommerce.YourChoice.Service.FileService;
 import com.ecommerce.YourChoice.Service.ProductService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,6 +40,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private FileService fileService;
+
+    @Value("${project.image}")
+    private String path;
 
     @Override
     public String addProduct(String categoryId, ProductDTO product) {
@@ -156,14 +160,11 @@ public class ProductServiceImpl implements ProductService {
 
         Product product = prodRepo.findById(productID).orElseThrow(() -> new ResourceNotFoundException("Product","product id",productID));
 
-        String path = "images/";
-
         String fileName = fileService.uploadImage(path , image);
 
         product.setImage(fileName);
 
         prodRepo.save(product);
-
 
         return "image have been updated for the product";
     }
