@@ -8,6 +8,7 @@ import com.ecommerce.YourChoice.Entity.category;
 import com.ecommerce.YourChoice.Exception.ResourceNotFoundException;
 import com.ecommerce.YourChoice.Repository.CategoryRepository;
 import com.ecommerce.YourChoice.Repository.ProductRepository;
+import com.ecommerce.YourChoice.Service.FileService;
 import com.ecommerce.YourChoice.Service.ProductService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Autowired
+    private FileService fileService;
 
     @Override
     public String addProduct(String categoryId, ProductDTO product) {
@@ -154,7 +158,7 @@ public class ProductServiceImpl implements ProductService {
 
         String path = "images/";
 
-        String fileName = uploadImage(path , image);
+        String fileName = fileService.uploadImage(path , image);
 
         product.setImage(fileName);
 
@@ -164,23 +168,4 @@ public class ProductServiceImpl implements ProductService {
         return "image have been updated for the product";
     }
 
-    private String uploadImage(String path, MultipartFile image) throws IOException {
-        String originalFileName = image.getOriginalFilename();
-
-        String randomId = UUID.randomUUID().toString();
-
-        String fileName = randomId.concat(originalFileName.substring(originalFileName.lastIndexOf('.')));
-
-        String filepath = path + File.separator + fileName;
-
-        File folder = new File(path);
-
-        if (!folder.exists()) {
-            folder.mkdir();
-        }
-
-        Files.copy(image.getInputStream() , Paths.get(filepath));
-
-        return fileName;
-    }
 }
