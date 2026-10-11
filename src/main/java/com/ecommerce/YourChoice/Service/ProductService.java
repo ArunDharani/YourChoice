@@ -2,20 +2,18 @@ package com.ecommerce.YourChoice.Service;
 
 import com.ecommerce.YourChoice.DTO.ProductDTO;
 import com.ecommerce.YourChoice.DTO.ProductResponseDTO;
-import com.ecommerce.YourChoice.Entity.category;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
 
 public interface ProductService {
     String addProduct(String categoryId, ProductDTO product);
 
-    ProductResponseDTO getAllProducts();
+    ProductResponseDTO getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 
-    ProductResponseDTO getAllProductsById(String categoryId);
+    ProductResponseDTO getAllProductsById(String categoryId, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 
-    ProductResponseDTO getAllByKeyword(String keyword);
+    ProductResponseDTO getAllByKeyword(String keyword, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 
     String updateProduct(ProductDTO productDTO, Long productId);
 
